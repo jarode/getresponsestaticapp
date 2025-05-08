@@ -2,15 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Installing GetResponse Integration</title>
+  <title>GetResponse Settings</title>
   <script src="https://api.bitrix24.com/api/v1/"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input { width: 100%; padding: 6px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+    button { margin-top: 20px; padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+  </style>
 </head>
 <body>
-  <h2>Installing GetResponse Integration...</h2>
+  <h2>GetResponse Integration Settings</h2>
+  <form onsubmit="saveSettings(); return false;">
+    <label for="apiKey">GetResponse API Key:</label>
+    <input type="text" id="apiKey" placeholder="Enter your API key" />
+
+    <label for="campaignId">Campaign ID:</label>
+    <input type="text" id="campaignId" placeholder="Enter campaign ID" />
+
+    <button type="submit">Save Settings</button>
+  </form>
+
   <script>
-    BX24.init(function() {
-      console.log("Bitrix24 app initialized");
-      BX24.installFinish();
+    function saveSettings() {
+      const data = {
+        apiKey: document.getElementById('apiKey').value,
+        campaignId: document.getElementById('campaignId').value
+      };
+      console.log("Saving settings...", data);
+      alert("Settings saved (not yet persisted)");
+    }
+
+    BX24.init(function () {
+      console.log("Bitrix24 app initialized in index.html");
     });
   </script>
 </body>
