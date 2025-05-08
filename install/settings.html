@@ -1,0 +1,17 @@
+<form onsubmit="saveSettings(); return false;">
+  <label>GetResponse API Key:</label><br />
+  <input type="text" id="apiKey" /><br />
+  <label>Campaign ID:</label><br />
+  <input type="text" id="campaignId" /><br />
+  <button type="submit">Save</button>
+</form>
+<script>
+function saveSettings() {
+  const data = {
+    apiKey: document.getElementById('apiKey').value,
+    campaignId: document.getElementById('campaignId').value
+  };
+  // TODO: send to backend or store locally (depends on licensing model)
+  alert("Settings saved (locally)");
+}
+</script>
