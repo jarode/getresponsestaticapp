@@ -4,54 +4,21 @@
   <meta charset="UTF-8">
   <title>GetResponse Settings</title>
   <script src="https://api.bitrix24.com/api/v1/"></script>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    label { display: block; margin-top: 10px; font-weight: bold; }
-    input { width: 100%; padding: 6px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
-    button { margin-top: 20px; padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    button:hover { background-color: #0056b3; }
-    .user-info { margin-top: 20px; font-style: italic; }
-  </style>
 </head>
 <body>
-  <h2>GetResponse Integration Settings</h2>
-
-  <div class="user-info" id="userInfo">Ładowanie danych użytkownika...</div>
-
-  <form onsubmit="saveSettings(); return false;">
-    <label for="apiKey">GetResponse API Key:</label>
-    <input type="text" id="apiKey" placeholder="Enter your API key" />
-
-    <label for="campaignId">Campaign ID:</label>
-    <input type="text" id="campaignId" placeholder="Enter campaign ID" />
-
-    <button type="submit">Save Settings</button>
-  </form>
+  <h1>Witaj w GetResponse Sync</h1>
+  <div id="userInfo">Ładowanie danych użytkownika...</div>
 
   <script>
-    BX24.init(function () {
-      console.log("Bitrix24 app initialized in index.html");
-
-      // Pobierz bieżącego użytkownika
-      BX24.callMethod('user.current', {}, function(result) {
-        if (result.error()) {
-          console.error(result.error());
-          document.getElementById('userInfo').innerText = "Błąd: " + result.error();
-        } else {
-          const user = result.data();
-          console.log("Użytkownik:", user);
-          document.getElementById('userInfo').innerText = "Twoje ID: " + user.ID + ", Imię: " + user.NAME;
-        }
+    if (typeof BX24 === "undefined") {
+      document.getElementById("userInfo").innerText = "BX24 nie działa – nie jesteś w Bitrix iframe";
+    } else {
+      BX24.init(function () {
+        BX24.callMethod('user.current', {}, function(res) {
+          const user = res.data();
+          document.getElementById("userInfo").innerText = `Zalogowany jako: ${user.NAME} ${user.LAST_NAME} (ID: ${user.ID})`;
+        });
       });
-    });
-
-    function saveSettings() {
-      const data = {
-        apiKey: document.getElementById('apiKey').value,
-        campaignId: document.getElementById('campaignId').value
-      };
-      console.log("Saving settings...", data);
-      alert("Settings saved (not yet persisted)");
     }
   </script>
 </body>
