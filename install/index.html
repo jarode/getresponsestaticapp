@@ -2,39 +2,74 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <title>GetResponse Bitrix Sync</title>
+  <title>GetResponse Sync Panel</title>
   <script src="https://api.bitrix24.com/api/v1/"></script>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ccc; max-width: 600px; margin: auto; }
-    .auth { margin-top: 20px; color: #555; font-size: 14px; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background-color: #f4f4f4;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    .log {
+      font-family: monospace;
+      font-size: 14px;
+      background: #f0f0f0;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <h2>🔄 GetResponse <-> Bitrix24</h2>
-    <p>Ta aplikacja jest poprawnie zainstalowana. Możesz przejść do konfiguracji.</p>
-
-    <div class="auth" id="authInfo">🔐 Trwa pobieranie danych autoryzacyjnych...</div>
+    <h2>🔄 GetResponse ↔ Bitrix24</h2>
+    <p>Aplikacja została zainstalowana i działa poprawnie.</p>
+    <p>Webhooki są rejestrowane automatycznie.</p>
+    <div id="userInfo">🔍 Ładowanie danych użytkownika...</div>
+    <div class="log" id="webhookLog">⏳ Rejestracja webhooków...</div>
   </div>
 
   <script>
     if (typeof BX24 === "undefined") {
-      document.getElementById("authInfo").innerText = "❌ Aplikacja nie działa w kontekście Bitrix24 (BX24 undefined)";
+      document.getElementById("userInfo").innerText = "❌ Aplikacja nie działa wewnątrz Bitrix24 (BX24 brak)";
     } else {
       BX24.init(function () {
-        const auth = BX24.getAuth();
-        console.log("AUTH DATA", auth);
-        document.getElementById("authInfo").innerText = 
-          `👤 Użytkownik: ${auth.user_id}, portal: ${auth.domain}\nToken: ${auth.access_token}`;
-          
-        // Przykład: Wywołanie własnego backendu
-        fetch("https://getresponsebitrixapp.azurewebsites.net/api/saveAuth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(auth)
-        }).then(res => res.text()).then(data => {
-          console.log("Backend:", data);
+        // Dane użytkownika
+        BX24.callMethod('user.current', {}, function(result) {
+          if (result.error()) {
+            document.getElementById("userInfo").innerText = "❌ Błąd: " + result.error_description;
+          } else {
+            const user = result.data();
+            document.getElementById("userInfo").innerText = `👤 Zalogowany jako: ${user.NAME} ${user.LAST_NAME} (ID: ${user.ID})`;
+          }
+        });
+
+        // Webhooki do zarejestrowania
+        const webhooks = [
+          { event: 'ONCRMLEADADD', handler: 'https://getresponsebitrixapp.azurewebsites.net/api/onLeadAdd' },
+          { event: 'ONCRMLEADUPDATE', handler: 'https://getresponsebitrixapp.azurewebsites.net/api/onLeadUpdate' },
+          { event: 'ONCRMDEALADD', handler: 'https://getresponsebitrixapp.azurewebsites.net/api/onDealAdd' },
+          { event: 'ONCRMDEALUPDATE', handler: 'https://getresponsebitrixapp.azurewebsites.net/api/onDealUpdate' }
+        ];
+
+        let logOutput = "";
+
+        webhooks.forEach(hook => {
+          BX24.callMethod('event.bind', hook, function(res) {
+            const status = res.error() ? `❌ ${hook.event}: ${res.error_description}` : `✅ ${hook.event} zarejestrowany`;
+            console.log(status);
+            logOutput += status + "\n";
+            document.getElementById("webhookLog").innerText = logOutput;
+          });
         });
       });
     }
