@@ -7,11 +7,14 @@
 </head>
 <body>
   <h2>Installing GetResponse Integration...</h2>
-  <script>
-    BX24.init(function() {
-      console.log("Bitrix24 app initialized");
-      BX24.installFinish();
-    });
-  </script>
+
+<script>
+  BX24.init(function() {
+    console.log("Install finish called");
+    alert("Instalacja zakończona");
+    BX24.installFinish();
+  });
+</script>
+
 </body>
 </html>
