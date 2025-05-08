@@ -1,22 +1,40 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>GetResponse Settings</title>
+  <meta charset="UTF-8" />
+  <title>GetResponse Bitrix Sync</title>
   <script src="https://api.bitrix24.com/api/v1/"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ccc; max-width: 600px; margin: auto; }
+    .auth { margin-top: 20px; color: #555; font-size: 14px; }
+  </style>
 </head>
 <body>
-  <h1>Witaj w GetResponse Sync</h1>
-  <div id="userInfo">Ładowanie danych użytkownika...</div>
+  <div class="card">
+    <h2>🔄 GetResponse <-> Bitrix24</h2>
+    <p>Ta aplikacja jest poprawnie zainstalowana. Możesz przejść do konfiguracji.</p>
+
+    <div class="auth" id="authInfo">🔐 Trwa pobieranie danych autoryzacyjnych...</div>
+  </div>
 
   <script>
     if (typeof BX24 === "undefined") {
-      document.getElementById("userInfo").innerText = "BX24 nie działa – nie jesteś w Bitrix iframe";
+      document.getElementById("authInfo").innerText = "❌ Aplikacja nie działa w kontekście Bitrix24 (BX24 undefined)";
     } else {
       BX24.init(function () {
-        BX24.callMethod('user.current', {}, function(res) {
-          const user = res.data();
-          document.getElementById("userInfo").innerText = `Zalogowany jako: ${user.NAME} ${user.LAST_NAME} (ID: ${user.ID})`;
+        const auth = BX24.getAuth();
+        console.log("AUTH DATA", auth);
+        document.getElementById("authInfo").innerText = 
+          `👤 Użytkownik: ${auth.user_id}, portal: ${auth.domain}\nToken: ${auth.access_token}`;
+          
+        // Przykład: Wywołanie własnego backendu
+        fetch("https://getresponsebitrixapp.azurewebsites.net/api/saveAuth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(auth)
+        }).then(res => res.text()).then(data => {
+          console.log("Backend:", data);
         });
       });
     }
