@@ -1,0 +1,45 @@
+{
+  "version": "1",
+  "code": "getresponsebitrixsync",
+  "name": {
+    "en": "GetResponse Sync",
+    "pl": "Synchronizacja z GetResponse"
+  },
+  "description": {
+    "en": "Automatically send new leads from Bitrix24 to GetResponse mailing list. Menu item title: Settings",
+    "pl": "Automatyczne przesyłanie leadów z Bitrix24 do listy mailingowej GetResponse. Menu: Ustawienia"
+  },
+  "partner_name": "Your Company",
+  "partner_url": "https://yourdomain.com",
+  "urls": {
+    "application": "https://yellow-field-0a32b3703.6.azurestaticapps.net/index.html",
+    "install": "https://yellow-field-0a32b3703.6.azurestaticapps.net/install.html"
+  },
+  "install": {
+    "redirect": "https://yellow-field-0a32b3703.6.azurestaticapps.net/install.html"
+  },
+  "use_iframe": true,
+  "iframe": {
+    "url": "https://yellow-field-0a32b3703.6.azurestaticapps.net/index.html",
+    "placement": "DEFAULT",
+    "title": {
+      "en": "Settings",
+      "pl": "Ustawienia"
+    }
+  },
+  "rights": [
+    "crm",
+    "user",
+    "contact",
+    "lead"
+  ],
+  "scope": [
+    "crm",
+    "user"
+  ],
+  "rest": {
+    "event": {
+      "ONCRMLEADADD": "https://getresponsebitrixapp.azurewebsites.net/api/onLeadAdd"
+    }
+  }
+}
