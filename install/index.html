@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
   <meta charset="UTF-8">
   <title>GetResponse Settings</title>
@@ -10,10 +10,14 @@
     input { width: 100%; padding: 6px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
     button { margin-top: 20px; padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
     button:hover { background-color: #0056b3; }
+    .user-info { margin-top: 20px; font-style: italic; }
   </style>
 </head>
 <body>
   <h2>GetResponse Integration Settings</h2>
+
+  <div class="user-info" id="userInfo">Ładowanie danych użytkownika...</div>
+
   <form onsubmit="saveSettings(); return false;">
     <label for="apiKey">GetResponse API Key:</label>
     <input type="text" id="apiKey" placeholder="Enter your API key" />
@@ -25,6 +29,22 @@
   </form>
 
   <script>
+    BX24.init(function () {
+      console.log("Bitrix24 app initialized in index.html");
+
+      // Pobierz bieżącego użytkownika
+      BX24.callMethod('user.current', {}, function(result) {
+        if (result.error()) {
+          console.error(result.error());
+          document.getElementById('userInfo').innerText = "Błąd: " + result.error();
+        } else {
+          const user = result.data();
+          console.log("Użytkownik:", user);
+          document.getElementById('userInfo').innerText = "Twoje ID: " + user.ID + ", Imię: " + user.NAME;
+        }
+      });
+    });
+
     function saveSettings() {
       const data = {
         apiKey: document.getElementById('apiKey').value,
@@ -33,10 +53,6 @@
       console.log("Saving settings...", data);
       alert("Settings saved (not yet persisted)");
     }
-
-    BX24.init(function () {
-      console.log("Bitrix24 app initialized in index.html");
-    });
   </script>
 </body>
 </html>
