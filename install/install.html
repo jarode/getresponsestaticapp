@@ -1,20 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Installing GetResponse Integration</title>
+  <title>Instalacja aplikacji</title>
   <script src="https://api.bitrix24.com/api/v1/"></script>
 </head>
 <body>
-  <h2>Installing GetResponse Integration...</h2>
-
-<script>
-  BX24.init(function() {
-    console.log("Install finish called");
-    alert("Instalacja zakończona");
-    BX24.installFinish();
-  });
-</script>
-
+  <p>Trwa instalacja aplikacji...</p>
+  <script>
+    BX24.init(function () {
+      BX24.installFinish();
+    });
+  </script>
 </body>
 </html>
